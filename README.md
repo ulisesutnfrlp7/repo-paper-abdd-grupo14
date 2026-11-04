@@ -16,7 +16,7 @@ Este repositorio contiene los scripts DDL, el generador de datos sintéticos, lo
 |---------|-----------|
 | `sql/` | Scripts DDL: fuente única de datos (`00_src.sql`), 4 modelos comparados (`10_model_eav.sql`, `11_model_jsonb_gin.sql`, `12_model_jsonb_btree.sql`, `13_model_udt.sql`), medición de tamaños (`sizes.sql`) y diagnóstico del optimizador (`explain_optimizador.sql`). |
 | `pgbench/` | Scripts de lectura, escritura (`UPDATE`) e inserción (`INSERT`) para cada uno de los 4 modelos, con sintaxis válida para `pgbench`. |
-| `scripts/` | `load.sh`: carga de datos y medición de tamaños. `run_benchmark.ps1`: orquestación automática del benchmark en PowerShell. |
+| `script/` | `medir_resultados.ps1`: orquestación automática del benchmark en PowerShell (4 modelos × 5 ratios × N repeticiones). |
 | `results/` | (Generado al correr) CSV y logs de las corridas de `pgbench`. |
 
 ---
@@ -79,7 +79,7 @@ Este repositorio contiene los scripts DDL, el generador de datos sintéticos, lo
 
 6. **Orquestación completa** (opcional, automatiza todo lo anterior):
    ```powershell
-   .\scripts\run_benchmark.ps1 -NROWS 1000000 -NATT5 5 -DURATION 60 -CLIENTS 10 -THREADS 2 -REPS 3
+   .\script\medir_resultados.ps1 -NROWS 1000000 -NATT5 5 -DURATION 60 -CLIENTS 10 -THREADS 2 -REPS 3
    ```
 
 ---
@@ -91,3 +91,4 @@ Este repositorio contiene los scripts DDL, el generador de datos sintéticos, lo
 - **Bytes de WAL** generados durante cada corrida (`pg_wal_lsn_diff`).
 - **Tamaño en disco** (heap + TOAST + índices, en bytes crudos).
 - **Estimaciones del optimizador** vs filas reales (`EXPLAIN ANALYZE`).
+

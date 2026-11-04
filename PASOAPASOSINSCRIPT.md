@@ -178,10 +178,10 @@ psql -d base_eav -c "VACUUM (ANALYZE)" -c "CHECKPOINT"
 
 ### Paso 9: Compilar los resultados
 
-Crear un CSV manualmente o usá el script `scripts\run_benchmark.ps1` que automatiza esto:
+Crear un CSV manualmente o usá el script `script\medir_resultados.ps1` que automatiza esto:
 
 ```powershell
-.\scripts\run_benchmark.ps1 -NROWS 1000000 -NATT5 5 -DURATION 60 -CLIENTS 10 -THREADS 2 -REPS 3
+.\script\medir_resultados.ps1 -NROWS 1000000 -NATT5 5 -DURATION 60 -CLIENTS 10 -THREADS 2 -REPS 3
 ```
 
 El resultado queda en `results\n1000000_a5\resultados.csv`.
@@ -204,14 +204,13 @@ El resultado queda en `results\n1000000_a5\resultados.csv`.
 | `pgbench\read_*.sql` | OK | Sintaxis válida para pgbench (`\set`, `:variable`). |
 | `pgbench\upd_*.sql` | OK | Sintaxis válida. |
 | `pgbench\ins_*.sql` | OK | Sintaxis válida, usa `seq_sku_nuevo`. |
-| `scripts\run_benchmark.ps1` | OK | PowerShell, válido para Windows. |
+| `script\medir_resultados.ps1` | OK | PowerShell, válido para Windows. |
 
 ### ⚠️ Archivos con advertencias
 
 | Archivo | Advertencia |
 |---------|-------------|
-| `scripts\load.sh` | Es un script **Bash**, no corre nativamente en PowerShell de Windows. Usalo en WSL, Git Bash, o Linux. Si se está en PowerShell nativo, crear las bases a mano como se muestra en el Paso 2. |
-| `scripts\run_benchmark.ps1` | Requiere que las políticas de ejecución de PowerShell permitan scripts. Si falla, ejecutar: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` |
+| `script\medir_resultados.ps1` | Requiere que las políticas de ejecución de PowerShell permitan scripts. Si falla, ejecutar: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` |
 | Todos los `pgbench\*.sql` | Requieren que se pase `-D nrows=1000000` en pgbench, de lo contrario `:nrows` no está definido y falla. |
 | Todos los `ins_*.sql` | Requieren que exista la secuencia `seq_sku_nuevo` en la base (se crea en el Paso 2). |
 
@@ -235,3 +234,4 @@ Cuando hayas ejecutado el paso a paso y tengas las capturas y el CSV, podemos:
 4. Linkear este repositorio en la sección Anexos del paper.
 
 ---
+
