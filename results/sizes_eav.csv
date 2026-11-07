@@ -1,0 +1,3 @@
+tabla,bytes_heap,bytes_toast,bytes_indices,bytes_total,filas_aprox
+producto_atributo_eav,237453312,0,193683456,431226880,5000000
+producto_eav,76472320,8192,54050816,130580480,1000000
