@@ -39,8 +39,8 @@
 -- Uso: psql -d <base_del_modelo> -f sql/explain_optimizador.sql -v nrows=1000000
 -- ============================================================================
 
-\set color_idx random(1, 4)
-\set marca_id random(1, 2000)
+-- Valores constantes para que el planificador pueda estimar los filtros
+-- y considerar los índices; random() sería VOLATILE y se evaluaría por fila.
 
 -- ------------------------------------------------------------
 -- MODELO A: EAV relacional (dos JOINs sobre tabla de atributos)
@@ -52,10 +52,10 @@ SELECT count(*)
 FROM producto_eav p
 JOIN producto_atributo_eav a1 ON p.id = a1.producto_id
    AND a1.clave = 'color'
-   AND a1.valor = (ARRAY['rojo','azul','verde','negro'])[:color_idx]
+   AND a1.valor = 'rojo'
 JOIN producto_atributo_eav a2 ON p.id = a2.producto_id
    AND a2.clave = 'marca'
-   AND a2.valor = 'Marca_' || :marca_id;
+   AND a2.valor = 'Marca_42';
 
 -- ------------------------------------------------------------
 -- MODELO B1: JSONB + GIN (operador @>, sin estadísticas por clave)
@@ -66,8 +66,8 @@ EXPLAIN (ANALYZE, BUFFERS, COSTS, VERBOSE)
 SELECT count(*)
 FROM producto_jsonb
 WHERE attrs @> jsonb_build_object(
-      'color', (ARRAY['rojo','azul','verde','negro'])[:color_idx],
-      'marca', 'Marca_' || :marca_id
+   'color', 'rojo',
+   'marca', 'Marca_42'
    );
 
 -- ------------------------------------------------------------
@@ -78,8 +78,8 @@ WHERE attrs @> jsonb_build_object(
 EXPLAIN (ANALYZE, BUFFERS, COSTS, VERBOSE)
 SELECT count(*)
 FROM producto_jsonb
-WHERE attrs->>'color' = (ARRAY['rojo','azul','verde','negro'])[:color_idx]
-  AND attrs->>'marca' = 'Marca_' || :marca_id;
+WHERE attrs->>'color' = 'rojo'
+   AND attrs->>'marca' = 'Marca_42';
 
 -- ------------------------------------------------------------
 -- MODELO C: UDT compuesto + dominios
@@ -89,5 +89,5 @@ WHERE attrs->>'color' = (ARRAY['rojo','azul','verde','negro'])[:color_idx]
 EXPLAIN (ANALYZE, BUFFERS, COSTS, VERBOSE)
 SELECT count(*)
 FROM producto_udt
-WHERE (especificaciones).color = (ARRAY['rojo','azul','verde','negro'])[:color_idx]
-  AND (especificaciones).marca = 'Marca_' || :marca_id;
+WHERE (especificaciones).color = 'rojo'
+   AND (especificaciones).marca = 'Marca_42';

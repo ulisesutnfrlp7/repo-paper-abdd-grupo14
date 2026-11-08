@@ -9,7 +9,7 @@ Un paper de benchmark académico necesita mostrar **evidencia reproducible**. A 
 | **Fig. 1** Entorno de prueba | Versión de PostgreSQL, CPU, RAM, SO | `SELECT version();` + info del sistema | Paso 1 (setup) |
 | **Fig. 2** Creación de esquemas | Salida de `psql` ejecutando los DDL de un modelo | `\dt` o mensajes `CREATE TABLE` | Paso 4 (DDL) |
 | **Fig. 3** Verificación de datos idénticos | `COUNT(*)` en las 4 bases (debe dar lo mismo) | `SELECT count(*) FROM producto_eav;` etc. | Paso 6 (verificación) |
-| **Fig. 4** Ejecución de pgbench (ejemplo) | Output de terminal con TPS, latencia promedio | `pgbench -d base_... -f ... -c 10 -j 2 -T 60` | Paso 7 (piloto) |
+| **Fig. 4** Ejecución de pgbench (piloto) | Output de terminal con TPS, latencia promedio | `pgbench -d base_... -f ... -c 10 -j 2 -T 60` | Paso 7 (piloto) |
 | **Fig. 5** Medición de WAL | `pg_current_wal_lsn()` antes y después + `pg_wal_lsn_diff()` | SQL de WAL | Paso 8 (WAL) |
 | **Fig. 6** Tamaño en disco | Output de `sizes.sql` (bytes heap, toast, índices, total) | `psql --csv -f sql/sizes.sql` | Paso 9 (tamaños) |
 | **Fig. 7** EXPLAIN ANALYZE | Plan de ejecución mostrando `rows=` estimado vs `Actual rows` | `psql -f sql/explain_optimizador.sql` | Paso 10 (optimizador) |
@@ -106,6 +106,8 @@ number of transactions actually processed: XXXXX
 latency average = XX ms
 tps = XX.XXXXXX
 ```
+
+Las Figuras 4 y 5 corresponden a la prueba piloto de validación, ejecutada con pesos `@9/@1/@1` (81,8 % lecturas, 9,1 % UPDATE y 9,1 % INSERT); las corridas finales usan pesos que representan exactamente cada ratio.
 
 ### Paso 5: Medir WAL generado (antes y después de una corrida)
 
